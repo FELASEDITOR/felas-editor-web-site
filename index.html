@@ -1,0 +1,3063 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FELAS EDITOR - Studio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2f;
+            --bg-elevated: #252542;
+            --text-primary: #ffffff;
+            --text-secondary: #b8b8d0;
+            --text-muted: #7a7a9a;
+            --border-color: #2d2d4a;
+            --card-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.8);
+            --hover-shadow: 0 25px 45px -12px rgba(100, 108, 255, 0.4);
+            --modal-overlay: rgba(0, 0, 0, 0.7);
+            --success-badge: #2ecc71;
+            --rating-color: #f1c40f;
+            
+            --premiere-color: #2e86de;
+            --after-color: #2e86de;
+            --rush-color: #2e86de;
+            --photoshop-color: #2e86de;
+            --lightroom-color: #00b0ff;
+            --vegas-color: #2e86de;
+            --davinci-color: #e84118;
+            --filmora-color: #27ae60;
+            --hitfilm-color: #f39c12;
+            --obs-color: #2c3e50;
+            --action-color: #c0392b;
+            --ocam-color: #e67e22;
+            --bandicam-color: #8B0000;
+            --capcut-color: #ffffff;
+            --inshot-color: #e67e22;
+            --kinemaster-color: #8A2BE2;
+            --filmora-mobile-color: #27ae60;
+            --az-color: #2980b9;
+            --mobizen-color: #c0392b;
+            --du-color: #e67e22;
+            --screenrec-color: #e67e22;
+            --audition-color: #8e44ad;
+            --voicemeeter-color: #3498db;
+            --sonar-color: #00b0ff;
+            --audacity-color: #f39c12;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f0f0f8;
+            --bg-secondary: #ffffff;
+            --bg-elevated: #f0f0ff;
+            --text-primary: #1a1a2f;
+            --text-secondary: #3f3f5a;
+            --text-muted: #6f6f8a;
+            --border-color: #d0d0e0;
+            --card-shadow: 0 15px 30px -12px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 20px 40px -12px rgba(100, 108, 255, 0.2);
+            --modal-overlay: rgba(0, 0, 0, 0.2);
+            
+            --premiere-color: #1e6f9f;
+            --after-color: #1e6f9f;
+            --rush-color: #1e6f9f;
+            --photoshop-color: #1e6f9f;
+            --lightroom-color: #0084b4;
+            --vegas-color: #1e6f9f;
+            --davinci-color: #c0392b;
+            --filmora-color: #1e8449;
+            --hitfilm-color: #e67e22;
+            --obs-color: #1e2b3a;
+            --action-color: #a52a2a;
+            --ocam-color: #d35400;
+            --bandicam-color: #6a0d0d;
+            --capcut-color: #666666;
+            --inshot-color: #d35400;
+            --kinemaster-color: #5e4b8b;
+            --filmora-mobile-color: #1e8449;
+            --az-color: #1f6a9a;
+            --mobizen-color: #a52a2a;
+            --du-color: #d35400;
+            --screenrec-color: #d35400;
+            --audition-color: #6c3483;
+            --voicemeeter-color: #2c7ab1;
+            --sonar-color: #0084b4;
+            --audacity-color: #d35400;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+
+        /* Imagem de fundo para todas as abas */
+        .tab-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://i.imgur.com/3Pzfjs6.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.08; /* Muito sutil para não atrapalhar a leitura */
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .header {
+            background: rgba(26, 26, 47, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 0.8rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+        }
+
+        [data-theme="light"] .header {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .profile-container {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .profile-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #5c6bc0, #8e44ad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 22px;
+            box-shadow: 0 8px 20px rgba(92, 107, 192, 0.3);
+            transition: transform 0.3s;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #5c6bc0, #8e44ad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .profile-info p {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .profile-info p i {
+            color: var(--success-badge);
+            font-size: 0.7rem;
+        }
+
+        .social-links {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            margin-right: 1rem;
+        }
+
+        .social-icon {
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .social-icon:hover {
+            color: #5c6bc0;
+            transform: translateY(-2px);
+        }
+
+        .theme-toggle {
+            width: 70px;
+            height: 32px;
+            background: var(--bg-elevated);
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8px;
+            cursor: pointer;
+            position: relative;
+            border: 1px solid var(--border-color);
+        }
+
+        .theme-toggle i {
+            font-size: 14px;
+            z-index: 2;
+        }
+
+        .fa-sun { color: #f39c12; }
+        .fa-moon { color: #95a5ff; }
+
+        .toggle-ball {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: linear-gradient(145deg, #5c6bc0, #8e44ad);
+            border-radius: 50%;
+            left: 2px;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        [data-theme="light"] .toggle-ball {
+            transform: translateX(38px);
+        }
+
+        .tabs-container {
+            background: rgba(26, 26, 47, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 0 2rem;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 73px;
+            z-index: 99;
+        }
+
+        [data-theme="light"] .tabs-container {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .tabs {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            overflow-x: auto;
+            padding-bottom: 0;
+        }
+
+        .tab {
+            padding: 1rem 0;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .tab::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(145deg, #5c6bc0, #8e44ad);
+            transition: width 0.3s;
+        }
+
+        .tab:hover::after,
+        .tab.active::after {
+            width: 100%;
+        }
+
+        .tab.active {
+            color: #5c6bc0;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            position: relative;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeUp 0.5s ease;
+            padding: 1rem;
+            border-radius: 32px;
+            background: rgba(26, 26, 47, 0.3);
+            backdrop-filter: blur(2px);
+        }
+
+        [data-theme="light"] .tab-content {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .home-section {
+            background: var(--bg-secondary);
+            border-radius: 32px;
+            padding: 3rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+        }
+
+        .welcome-title {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            background: linear-gradient(145deg, #5c6bc0, #8e44ad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .intro-text {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 800px;
+        }
+
+        .presentation-card {
+            background: var(--bg-elevated);
+            border-radius: 24px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .services-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .service-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+            min-height: 200px;
+        }
+
+        .service-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .service-item-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.15;
+            z-index: 0;
+            transition: opacity 0.3s;
+        }
+
+        .service-item:hover .service-item-bg {
+            opacity: 0.25;
+        }
+
+        .service-icon, .service-item h3, .service-item p {
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            color: #5c6bc0;
+            margin-bottom: 1rem;
+        }
+
+        .service-item h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .service-item p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .contact-call {
+            background: linear-gradient(145deg, #5c6bc0, #8e44ad);
+            border-radius: 24px;
+            padding: 2rem;
+            color: white;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .approved-badge-large {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--success-badge);
+            padding: 1rem 2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0 3rem;
+        }
+
+        .product-card {
+            background: var(--bg-secondary);
+            border-radius: 28px;
+            padding: 1.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: currentColor;
+            opacity: 0.6;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .product-card[data-app="premiere"] { color: var(--premiere-color); }
+        .product-card[data-app="after"] { color: var(--after-color); }
+        .product-card[data-app="rush"] { color: var(--rush-color); }
+        .product-card[data-app="photoshop"] { color: var(--photoshop-color); }
+        .product-card[data-app="lightroom"] { color: var(--lightroom-color); }
+        .product-card[data-app="vegas"] { color: var(--vegas-color); }
+        .product-card[data-app="davinci"] { color: var(--davinci-color); }
+        .product-card[data-app="filmora"] { color: var(--filmora-color); }
+        .product-card[data-app="hitfilm"] { color: var(--hitfilm-color); }
+        .product-card[data-app="obs"] { color: var(--obs-color); }
+        .product-card[data-app="action"] { color: var(--action-color); }
+        .product-card[data-app="ocam"] { color: var(--ocam-color); }
+        .product-card[data-app="bandicam"] { color: var(--bandicam-color); }
+        .product-card[data-app="capcut"] { color: var(--capcut-color); }
+        .product-card[data-app="inshot"] { color: var(--inshot-color); }
+        .product-card[data-app="kinemaster"] { color: var(--kinemaster-color); }
+        .product-card[data-app="filmora-mobile"] { color: var(--filmora-mobile-color); }
+        .product-card[data-app="az"] { color: var(--az-color); }
+        .product-card[data-app="mobizen"] { color: var(--mobizen-color); }
+        .product-card[data-app="du"] { color: var(--du-color); }
+        .product-card[data-app="screenrec"] { color: var(--screenrec-color); }
+        .product-card[data-app="audition"] { color: var(--audition-color); }
+        .product-card[data-app="voicemeeter"] { color: var(--voicemeeter-color); }
+        .product-card[data-app="sonar"] { color: var(--sonar-color); }
+        .product-card[data-app="audacity"] { color: var(--audacity-color); }
+
+        .product-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            transition: transform 0.3s;
+            overflow: hidden;
+            border: 2px solid currentColor;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+        }
+
+        .product-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-card[data-app="premiere"] .product-icon img {
+            transform: scale(1.6);
+        }
+        .product-card[data-app="after"] .product-icon img {
+            transform: scale(1.2);
+        }
+
+        .product-icon i {
+            font-size: 32px;
+            color: currentColor;
+        }
+
+        .product-card:hover .product-icon {
+            transform: scale(1.1) rotate(3deg);
+        }
+
+        .product-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+            color: var(--text-primary);
+        }
+
+        .product-category {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .product-price-small {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: currentColor;
+        }
+
+        .pack-section {
+            background: var(--bg-secondary);
+            border-radius: 32px;
+            padding: 2.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+        }
+
+        .pack-header {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .pack-image-placeholder {
+            width: 300px;
+            height: 200px;
+            background: var(--bg-elevated);
+            border-radius: 24px;
+            border: 2px dashed var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+        .pack-info {
+            flex: 1;
+        }
+
+        .pack-info h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(145deg, #5c6bc0, #8e44ad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .benefits-list {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .benefits-list li {
+            margin: 0.8rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1rem;
+        }
+
+        .benefits-list i {
+            color: var(--success-badge);
+            font-size: 1.2rem;
+        }
+
+        .pack-action-btn {
+            background: linear-gradient(145deg, #5c6bc0, #8e44ad);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 10px 25px rgba(92, 107, 192, 0.4);
+            margin-top: 1rem;
+        }
+
+        .pack-action-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 35px rgba(92, 107, 192, 0.6);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--modal-overlay);
+            backdrop-filter: blur(12px);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s linear 0.3s, opacity 0.3s ease;
+        }
+
+        .modal.active {
+            visibility: visible;
+            opacity: 1;
+            transition-delay: 0s;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 32px;
+            max-width: 1100px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 70px -20px rgba(0,0,0,0.6);
+            border: 1px solid var(--border-color);
+            transform: scale(0.95) translateY(20px);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .modal-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+        }
+
+        .modal-left {
+            padding: 2rem;
+            background: var(--bg-elevated);
+            border-right: 1px solid var(--border-color);
+            border-radius: 32px 0 0 32px;
+        }
+
+        .product-main-image {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .product-main-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .description-area {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            padding: 1.2rem;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-right {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .modal-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid currentColor;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal[data-app="premiere"] .modal-icon img {
+            transform: scale(1.4);
+        }
+        .modal[data-app="after"] .modal-icon img {
+            transform: scale(1.2);
+        }
+
+        .modal-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #5c6bc0, #8e44ad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--success-badge);
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            width: fit-content;
+        }
+
+        .price-tag {
+            margin: 0.5rem 0;
+        }
+
+        .price-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .modal-price {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--accent, #5c6bc0);
+            line-height: 1;
+        }
+
+        .rating-summary {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-elevated);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .rating-average {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--rating-color);
+            line-height: 1;
+        }
+
+        .rating-stars {
+            color: var(--rating-color);
+            font-size: 1rem;
+            letter-spacing: 3px;
+        }
+
+        .rating-count {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .reviews-list {
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .reviews-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .reviews-list::-webkit-scrollbar-track {
+            background: var(--border-color);
+            border-radius: 10px;
+        }
+
+        .reviews-list::-webkit-scrollbar-thumb {
+            background: #5c6bc0;
+            border-radius: 10px;
+        }
+
+        .review-mini {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .review-mini-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.3rem;
+        }
+
+        .review-mini-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .review-mini-stars {
+            color: var(--rating-color);
+            font-size: 0.8rem;
+        }
+
+        .review-mini-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .buy-btn {
+            background: linear-gradient(145deg, #5c6bc0, #8e44ad);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            box-shadow: 0 10px 25px rgba(92, 107, 192, 0.4);
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .buy-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 35px rgba(92, 107, 192, 0.6);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 40px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            background: #5c6bc0;
+            color: white;
+            transform: rotate(180deg);
+        }
+
+        .footer {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .modal-layout {
+                grid-template-columns: 1fr;
+            }
+            .modal-left {
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                border-radius: 32px 32px 0 0;
+            }
+            .pack-header {
+                flex-direction: column;
+            }
+            .pack-image-placeholder {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="profile-container">
+                <div class="profile-avatar" id="profileAvatar">
+                    <!-- Foto de perfil inserida via script -->
+                </div>
+                <div class="profile-info">
+                    <h1>FELAS EDITOR</h1>
+                    <p><i class="fas fa-check-circle"></i> Editor • Thumbmaker • Criador • Dev</p>
+                </div>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div class="social-links">
+                    <a href="https://discord.gg/kV2tSjKgWZ" class="social-icon" target="_blank" title="Discord"><i class="fab fa-discord"></i></a>
+                    <a href="https://www.tiktok.com/@felas.editor?is_from_webapp=1&sender_device=pc" class="social-icon" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://www.instagram.com/felas.editor/" class="social-icon" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.youtube.com/@FelasEditor" class="social-icon" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+                
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <i class="fas fa-sun"></i>
+                    <i class="fas fa-moon"></i>
+                    <div class="toggle-ball"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="tabs-container">
+        <ul class="tabs">
+            <li class="tab active" onclick="switchTab('home', this)"><i class="fas fa-home"></i> Início</li>
+            <li class="tab" onclick="switchTab('pc', this)"><i class="fas fa-desktop"></i> Edição PC</li>
+            <li class="tab" onclick="switchTab('mobile', this)"><i class="fas fa-mobile-alt"></i> Mobile</li>
+            <li class="tab" onclick="switchTab('audio', this)"><i class="fas fa-headphones"></i> Áudio</li>
+            <li class="tab" onclick="switchTab('pack-edicao', this)"><i class="fas fa-film"></i> Pack Edição</li>
+            <li class="tab" onclick="switchTab('pack-otimizacao', this)"><i class="fas fa-tachometer-alt"></i> Pack Otimização</li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <!-- HOME -->
+        <div id="home" class="tab-content active">
+            <div class="home-section">
+                <h1 class="welcome-title">Bem-vindos ao meu site</h1>
+                <p class="intro-text">Olá, eu sou <strong>FELAS</strong>, editor de vídeo, thumbmaker, criador de wallpapers personalizados e também desenvolvo pequenos sites. Aqui você encontra softwares profissionais e pode contratar meus serviços.</p>
+                
+                <div class="presentation-card">
+                    <h2><i class="fas fa-star" style="color: #5c6bc0;"></i> Sobre mim e meus serviços</h2>
+                    
+                    <div class="services-list">
+                        <div class="service-item">
+                            <img class="service-item-bg" src="https://i.imgur.com/2NvOe2c.jpeg" alt="">
+                            <div class="service-icon"><i class="fas fa-video"></i></div>
+                            <h3>Edição de Vídeo</h3>
+                            <p>Gameplays, vlogs, vídeos profissionais para YouTube e redes sociais.</p>
+                        </div>
+                        <div class="service-item">
+                            <img class="service-item-bg" src="https://i.imgur.com/2JjvFxE.png" alt="">
+                            <div class="service-icon"><i class="fas fa-paint-brush"></i></div>
+                            <h3>Thumbmaker</h3>
+                            <p>Thumbnails atraentes e personalizadas para destacar seu conteúdo.</p>
+                        </div>
+                        <div class="service-item">
+                            <img class="service-item-bg" src="https://i.imgur.com/EeNMiUM.jpeg" alt="">
+                            <div class="service-icon"><i class="fas fa-image"></i></div>
+                            <h3>Wallpapers Personalizados</h3>
+                            <p>Criação de wallpapers exclusivos para PC, celular ou uso comercial.</p>
+                        </div>
+                        <div class="service-item">
+                            <img class="service-item-bg" src="https://i.imgur.com/Hj6pG1k.png" alt="">
+                            <div class="service-icon"><i class="fas fa-code"></i></div>
+                            <h3>Criação de Pequenos Sites</h3>
+                            <p>Desenvolvimento de sites simples e profissionais para você ou seu negócio.</p>
+                        </div>
+                    </div>
+
+                    <p style="color: var(--text-secondary); font-size: 1.1rem; margin: 1.5rem 0;">
+                        Este site não é apenas para venda de programas. Aqui você também pode <strong>contratar meus serviços</strong> de edição, criação de thumbnails, wallpapers e sites.
+                    </p>
+                    <p style="color: var(--text-secondary); font-size: 1rem; margin-top: 0.5rem; font-style: italic;">
+                        💬 Para combinar valores e detalhes, é só me chamar no privado do Instagram ou Discord.
+                    </p>
+                </div>
+
+                <div class="contact-call">
+                    <h3>Quer contratar meus serviços?</h3>
+                    <p>Entre em contato pelas minhas redes sociais abaixo 👇</p>
+                    <div class="social-proof" style="margin-top: 1.5rem;">
+                        <a href="https://discord.gg/kV2tSjKgWZ" class="social-icon" style="color: white; font-size: 2rem; margin: 0 0.5rem;"><i class="fab fa-discord"></i></a>
+                        <a href="https://www.tiktok.com/@felas.editor?is_from_webapp=1&sender_device=pc" class="social-icon" style="color: white; font-size: 2rem; margin: 0 0.5rem;"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://www.instagram.com/felas.editor/" class="social-icon" style="color: white; font-size: 2rem; margin: 0 0.5rem;"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.youtube.com/@FelasEditor" class="social-icon" style="color: white; font-size: 2rem; margin: 0 0.5rem;"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <div class="approved-badge-large">
+                    <i class="fas fa-check-circle fa-lg"></i> Todos os produtos e serviços são testados e aprovados por FELAS
+                </div>
+            </div>
+        </div>
+
+        <!-- PC -->
+        <div id="pc" class="tab-content">
+            <h2 class="section-title"><i class="fas fa-bolt"></i> Softwares para PC</h2>
+            <div class="products-grid">
+                <!-- Premiere Pro -->
+                <div class="product-card" data-app="premiere" onclick="openModal('premiere')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/7I9YCm4.png" alt="Premiere Pro">
+                    </div>
+                    <h3>Premiere Pro</h3>
+                    <div class="product-category">Adobe</div>
+                    <div class="product-price-small">R$ 24,90</div>
+                </div>
+                <!-- After Effects -->
+                <div class="product-card" data-app="after" onclick="openModal('after')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/DjcjHGV.jpeg" alt="After Effects">
+                    </div>
+                    <h3>After Effects</h3>
+                    <div class="product-category">Adobe</div>
+                    <div class="product-price-small">R$ 22,50</div>
+                </div>
+                <!-- Premiere Rush -->
+                <div class="product-card" data-app="rush" onclick="openModal('rush')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/NA9eWw0.jpeg" alt="Premiere Rush">
+                    </div>
+                    <h3>Premiere Rush</h3>
+                    <div class="product-category">Adobe</div>
+                    <div class="product-price-small">R$ 19,90</div>
+                </div>
+                <!-- Photoshop -->
+                <div class="product-card" data-app="photoshop" onclick="openModal('photoshop')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/yK3Exva.jpeg" alt="Photoshop">
+                    </div>
+                    <h3>Photoshop</h3>
+                    <div class="product-category">Adobe</div>
+                    <div class="product-price-small">R$ 21,00</div>
+                </div>
+                <!-- Lightroom -->
+                <div class="product-card" data-app="lightroom" onclick="openModal('lightroom')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/wO11i1R.jpeg" alt="Lightroom">
+                    </div>
+                    <h3>Lightroom</h3>
+                    <div class="product-category">Adobe</div>
+                    <div class="product-price-small">R$ 18,00</div>
+                </div>
+                <!-- Vegas Pro -->
+                <div class="product-card" data-app="vegas" onclick="openModal('vegas')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/Pz6LrGc.jpeg" alt="Vegas Pro">
+                    </div>
+                    <h3>Vegas Pro</h3>
+                    <div class="product-category">MAGIX</div>
+                    <div class="product-price-small">R$ 27,00</div>
+                </div>
+                <!-- DaVinci Resolve -->
+                <div class="product-card" data-app="davinci" onclick="openModal('davinci')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/hlia7Hj.jpeg" alt="DaVinci Resolve">
+                    </div>
+                    <h3>DaVinci Resolve</h3>
+                    <div class="product-category">Blackmagic</div>
+                    <div class="product-price-small">R$ 29,90</div>
+                </div>
+                <!-- Filmora PC -->
+                <div class="product-card" data-app="filmora" onclick="openModal('filmora')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/recYYQF.jpeg" alt="Filmora">
+                    </div>
+                    <h3>Filmora</h3>
+                    <div class="product-category">Wondershare</div>
+                    <div class="product-price-small">R$ 20,00</div>
+                </div>
+                <!-- HitFilm Express -->
+                <div class="product-card" data-app="hitfilm" onclick="openModal('hitfilm')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/NgHB8H9.jpeg" alt="HitFilm Express">
+                    </div>
+                    <h3>HitFilm Express</h3>
+                    <div class="product-category">FXhome</div>
+                    <div class="product-price-small">R$ 15,00</div>
+                </div>
+            </div>
+
+            <!-- Gravadores de Tela para PC -->
+            <h2 class="section-title"><i class="fas fa-desktop"></i> Gravadores de Tela para PC</h2>
+            <div class="products-grid">
+                <!-- OBS Studio -->
+                <div class="product-card" data-app="obs" onclick="openModal('obs')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/YXjr1lN.jpeg" alt="OBS Studio">
+                    </div>
+                    <h3>OBS Studio</h3>
+                    <div class="product-category">Open Source</div>
+                    <div class="product-price-small">Grátis</div>
+                </div>
+                <!-- Action! -->
+                <div class="product-card" data-app="action" onclick="openModal('action')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/K54kZ4N.jpeg" alt="Action!">
+                    </div>
+                    <h3>Action!</h3>
+                    <div class="product-category">Mirillis</div>
+                    <div class="product-price-small">R$ 5,00</div>
+                </div>
+                <!-- oCam -->
+                <div class="product-card" data-app="ocam" onclick="openModal('ocam')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/UAgH3ER.png" alt="oCam">
+                    </div>
+                    <h3>oCam</h3>
+                    <div class="product-category">Ohsoft</div>
+                    <div class="product-price-small">Grátis</div>
+                </div>
+                <!-- Bandicam -->
+                <div class="product-card" data-app="bandicam" onclick="openModal('bandicam')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/JC6jRiw.jpeg" alt="Bandicam">
+                    </div>
+                    <h3>Bandicam</h3>
+                    <div class="product-category">Bandisoft</div>
+                    <div class="product-price-small">R$ 5,00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MOBILE -->
+        <div id="mobile" class="tab-content">
+            <h2 class="section-title"><i class="fas fa-mobile-alt"></i> Apps Mobile</h2>
+            <div class="products-grid">
+                <!-- CapCut -->
+                <div class="product-card" data-app="capcut" onclick="openModal('capcut')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/VgfWd40.jpeg" alt="CapCut">
+                    </div>
+                    <h3>CapCut</h3>
+                    <div class="product-category">Bytedance</div>
+                    <div class="product-price-small">Grátis</div>
+                </div>
+                <!-- InShot -->
+                <div class="product-card" data-app="inshot" onclick="openModal('inshot')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/ff6Da7n.jpeg" alt="InShot">
+                    </div>
+                    <h3>InShot</h3>
+                    <div class="product-category">InShot Inc.</div>
+                    <div class="product-price-small">Grátis</div>
+                </div>
+                <!-- KineMaster -->
+                <div class="product-card" data-app="kinemaster" onclick="openModal('kinemaster')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/PKp0lJn.jpeg" alt="KineMaster">
+                    </div>
+                    <h3>KineMaster</h3>
+                    <div class="product-category">NexStreaming</div>
+                    <div class="product-price-small">R$ 19,90</div>
+                </div>
+                <!-- Filmora Mobile -->
+                <div class="product-card" data-app="filmora-mobile" onclick="openModal('filmora-mobile')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/vMt9294.jpeg" alt="Filmora Mobile">
+                    </div>
+                    <h3>Filmora Mobile</h3>
+                    <div class="product-category">Wondershare</div>
+                    <div class="product-price-small">R$ 7,00</div>
+                </div>
+            </div>
+
+            <!-- Gravadores de Tela Mobile -->
+            <h2 class="section-title"><i class="fas fa-mobile-alt"></i> Gravadores de Tela Mobile</h2>
+            <div class="products-grid">
+                <!-- AZ Screen Recorder -->
+                <div class="product-card" data-app="az" onclick="openModal('az')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/uWWSOOL.jpeg" alt="AZ Screen Recorder">
+                    </div>
+                    <h3>AZ Screen Recorder</h3>
+                    <div class="product-category">AZ</div>
+                    <div class="product-price-small">Grátis</div>
+                </div>
+                <!-- Mobizen -->
+                <div class="product-card" data-app="mobizen" onclick="openModal('mobizen')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/GXUnScA.png" alt="Mobizen">
+                    </div>
+                    <h3>Mobizen</h3>
+                    <div class="product-category">Mobizen</div>
+                    <div class="product-price-small">Grátis</div>
+                </div>
+                <!-- DU Recorder -->
+                <div class="product-card" data-app="du" onclick="openModal('du')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/5U3GKkq.png" alt="DU Recorder">
+                    </div>
+                    <h3>DU Recorder</h3>
+                    <div class="product-category">DU Apps</div>
+                    <div class="product-price-small">Grátis</div>
+                </div>
+                <!-- Screen Recorder -->
+                <div class="product-card" data-app="screenrec" onclick="openModal('screenrec')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/q55Ysak.png" alt="Screen Recorder">
+                    </div>
+                    <h3>Screen Recorder</h3>
+                    <div class="product-category">Glitch</div>
+                    <div class="product-price-small">Grátis</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ÁUDIO -->
+        <div id="audio" class="tab-content">
+            <h2 class="section-title"><i class="fas fa-headphones"></i> Áudio Profissional</h2>
+            <div class="products-grid">
+                <!-- Audition -->
+                <div class="product-card" data-app="audition" onclick="openModal('audition')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/FIOCWzU.jpeg" alt="Adobe Audition">
+                    </div>
+                    <h3>Adobe Audition</h3>
+                    <div class="product-category">Adobe</div>
+                    <div class="product-price-small">R$ 28,00</div>
+                </div>
+                <!-- VoiceMeeter Banana -->
+                <div class="product-card" data-app="voicemeeter" onclick="openModal('voicemeeter')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/QDYiSkX.png" alt="VoiceMeeter Banana">
+                    </div>
+                    <h3>VoiceMeeter Banana</h3>
+                    <div class="product-category">VB-Audio</div>
+                    <div class="product-price-small">Grátis</div>
+                </div>
+                <!-- SteelSeries Sonar -->
+                <div class="product-card" data-app="sonar" onclick="openModal('sonar')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/w1eixCE.png" alt="SteelSeries Sonar">
+                    </div>
+                    <h3>SteelSeries Sonar</h3>
+                    <div class="product-category">SteelSeries GG</div>
+                    <div class="product-price-small">Grátis</div>
+                </div>
+                <!-- Audacity -->
+                <div class="product-card" data-app="audacity" onclick="openModal('audacity')">
+                    <div class="product-icon">
+                        <img src="https://i.imgur.com/8Skb4HH.jpeg" alt="Audacity">
+                    </div>
+                    <h3>Audacity</h3>
+                    <div class="product-category">Open Source</div>
+                    <div class="product-price-small">Grátis</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PACK EDIÇÃO -->
+        <div id="pack-edicao" class="tab-content">
+            <div class="pack-section">
+                <div class="pack-header">
+                    <div class="pack-image-placeholder" id="packEdicaoImage">
+                        <img src="https://i.imgur.com/dAgHSAG.png" alt="Pack de Edição" style="width:100%; height:100%; object-fit:cover; border-radius:24px;">
+                    </div>
+                    <div class="pack-info">
+                        <h2>Pack de Edição de Vídeo</h2>
+                        <p class="pack-description">
+                            Mais de 20GB de conteúdo exclusivo para editar mais rápido e deixar seus vídeos mais chamativos. Inclui SFX, overlays, transições, memes, tipografias e muito mais.
+                        </p>
+                        <ul class="benefits-list">
+                            <li><i class="fas fa-check-circle"></i> +20GB de recursos premium</li>
+                            <li><i class="fas fa-check-circle"></i> Pronto para YouTube, TikTok e Shorts</li>
+                            <li><i class="fas fa-check-circle"></i> Economize tempo no workflow</li>
+                        </ul>
+                        <p style="color: var(--text-secondary); margin: 1rem 0;">
+                            Acesso imediato após a compra. Conteúdo selecionado para dar acabamento profissional.
+                        </p>
+                        <a href="https://zypfelas.github.io/ZypFelas-Editor/" class="pack-action-btn" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> VER PACK EXTERNO
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PACK OTIMIZAÇÃO -->
+        <div id="pack-otimizacao" class="tab-content">
+            <div class="pack-section">
+                <div class="pack-header">
+                    <div class="pack-image-placeholder" id="packOtimizacaoImage">
+                        <img src="https://i.imgur.com/mVa47w0.png" alt="Pack de Otimização" style="width:100%; height:100%; object-fit:cover; border-radius:24px;">
+                    </div>
+                    <div class="pack-info">
+                        <h2>Pack de Otimização para PC Fraco</h2>
+                        <p class="pack-description">
+                            Otimizações práticas para deixar o sistema mais leve, melhorar estabilidade e aumentar desempenho em jogos, edição de vídeo e renderização.
+                        </p>
+                        <ul class="benefits-list">
+                            <li><i class="fas fa-check-circle"></i> Mais FPS e menos stutter</li>
+                            <li><i class="fas fa-check-circle"></i> Redução de processos desnecessários</li>
+                            <li><i class="fas fa-check-circle"></i> Passo a passo simples de aplicar</li>
+                        </ul>
+                        <p style="color: var(--text-secondary); margin: 1rem 0;">
+                            Acesso imediato após a compra. Resultado rápido e seguro.
+                        </p>
+                        <a href="https://zypfelas.github.io/SUPER-PACK-DE-OTIMIZA-O/" class="pack-action-btn" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> VER PACK EXTERNO
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ===== MODAIS ===== -->
+
+    <!-- Premiere Pro -->
+    <div id="modal-premiere" class="modal" data-app="premiere">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('premiere')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/6mM9xw7.jpeg" alt="Interface Premiere Pro">
+                    </div>
+                    <div class="description-area">
+                        <strong>Adobe Premiere Pro</strong> é o software líder em edição de vídeo profissional. Ideal para gameplays, vlogs, filmes, séries e conteúdo para redes sociais. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/7I9YCm4.png" alt="Premiere Pro">
+                        </div>
+                        <h2>Premiere Pro</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">PREÇO ESPECIAL</span>
+                        <div class="modal-price" style="color: var(--premiere-color);">R$ 24,90</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.9</span>
+                        <div>
+                            <div class="rating-stars">★★★★★</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 234 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">João Pedro</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Melhor editor que já usei. Rápido e sem bugs."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Maria Fernanda</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Instalação fácil e produto original. Recomendo!"</p>
+                        </div>
+                    </div>
+                    <a href="https://pay.cakto.com.br/xtutz6b_787374" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> COMPRAR AGORA
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- After Effects -->
+    <div id="modal-after" class="modal" data-app="after">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('after')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/ft6RqJf.jpeg" alt="Interface After Effects">
+                    </div>
+                    <div class="description-area">
+                        <strong>Adobe After Effects</strong> é o software padrão para criação de efeitos visuais, motion graphics e animações profissionais. Perfeito para vídeos criativos, vinhetas, VFX e muito mais. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/DjcjHGV.jpeg" alt="After Effects">
+                        </div>
+                        <h2>After Effects</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">PREÇO ESPECIAL</span>
+                        <div class="modal-price" style="color: var(--after-color);">R$ 22,50</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.8</span>
+                        <div>
+                            <div class="rating-stars">★★★★★</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 189 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Carlos Motion</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Ferramenta indispensável para motion design!"</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Camila VFX</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Os efeitos são infinitos, melhor software da Adobe."</p>
+                        </div>
+                    </div>
+                    <a href="https://pay.cakto.com.br/q3wsczn_787399" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> COMPRAR AGORA
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Premiere Rush -->
+    <div id="modal-rush" class="modal" data-app="rush">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('rush')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/ZW6VmOu.png" alt="Interface Premiere Rush">
+                    </div>
+                    <div class="description-area">
+                        <strong>Adobe Premiere Rush</strong> é o editor de vídeo tudo-em-um que facilita a criação e compartilhamento de conteúdo online. Perfeito para criadores que precisam de agilidade, com ferramentas poderosas e integração na nuvem. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/NA9eWw0.jpeg" alt="Premiere Rush">
+                        </div>
+                        <h2>Premiere Rush</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">PREÇO ESPECIAL</span>
+                        <div class="modal-price" style="color: var(--rush-color);">R$ 19,90</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.7</span>
+                        <div>
+                            <div class="rating-stars">★★★★☆</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 156 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Carla Souza</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Perfeito para edições rápidas no celular e PC!"</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Marcos Lima</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Muito prático, sincroniza tudo na nuvem."</p>
+                        </div>
+                    </div>
+                    <a href="https://pay.cakto.com.br/32gm6yf_787457" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> COMPRAR AGORA
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Photoshop -->
+    <div id="modal-photoshop" class="modal" data-app="photoshop">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('photoshop')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/HFVSjMo.jpeg" alt="Interface Photoshop">
+                    </div>
+                    <div class="description-area">
+                        <strong>Adobe Photoshop</strong> é o software padrão da indústria para edição de imagens e design gráfico. Perfeito para criar thumbnails, artes para redes sociais, manipulação de fotos, wallpapers personalizados e muito mais. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/yK3Exva.jpeg" alt="Photoshop">
+                        </div>
+                        <h2>Photoshop</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">PREÇO ESPECIAL</span>
+                        <div class="modal-price" style="color: var(--photoshop-color);">R$ 21,00</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.9</span>
+                        <div>
+                            <div class="rating-stars">★★★★★</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 312 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Ana Paula</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Uso há anos, insubstituível para criar artes."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Carlos Thumb</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Perfeito para thumbnails, entrega rápida."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Mariana Design</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Ferramenta completa, nunca trava."</p>
+                        </div>
+                    </div>
+                    <a href="https://pay.cakto.com.br/3c25csk_787476" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> COMPRAR AGORA
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightroom -->
+    <div id="modal-lightroom" class="modal" data-app="lightroom">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('lightroom')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/G4Vi0Lo.jpeg" alt="Interface Lightroom">
+                    </div>
+                    <div class="description-area">
+                        <strong>Adobe Lightroom</strong> é o software definitivo para edição e organização de fotos. Perfeito para fotógrafos e criadores que buscam ajustes precisos de cor, presets incríveis e fluxo de trabalho profissional. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/wO11i1R.jpeg" alt="Lightroom">
+                        </div>
+                        <h2>Lightroom</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">PREÇO ESPECIAL</span>
+                        <div class="modal-price" style="color: var(--lightroom-color);">R$ 18,00</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.8</span>
+                        <div>
+                            <div class="rating-stars">★★★★★</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 178 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Fotógrafo Lucas</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Melhor software para edição de fotos, muito completo."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Ana Clara</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Presets incríveis e interface intuitiva."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Rafael Santos</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Entrega rápida e produto original."</p>
+                        </div>
+                    </div>
+                    <a href="https://pay.cakto.com.br/39yi8ui_787514" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> COMPRAR AGORA
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vegas Pro -->
+    <div id="modal-vegas" class="modal" data-app="vegas">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('vegas')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/5NxM6cj.jpeg" alt="Interface Vegas Pro">
+                    </div>
+                    <div class="description-area">
+                        <strong>Vegas Pro</strong> é um software de edição de vídeo profissional conhecido por sua linha do tempo poderosa e ferramentas avançadas de áudio. Perfeito para criadores que buscam flexibilidade e desempenho. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/Pz6LrGc.jpeg" alt="Vegas Pro">
+                        </div>
+                        <h2>Vegas Pro</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">PREÇO ESPECIAL</span>
+                        <div class="modal-price" style="color: var(--vegas-color);">R$ 27,00</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.7</span>
+                        <div>
+                            <div class="rating-stars">★★★★☆</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 145 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Eduardo Silva</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Muito estável e com ótimas ferramentas de áudio."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Patrícia Lima</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Ótimo custo-benefício, entrega rápida."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Ricardo Santos</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Uso para edições complexas e nunca trava."</p>
+                        </div>
+                    </div>
+                    <a href="https://pay.cakto.com.br/73iyf4w_787539" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> COMPRAR AGORA
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DaVinci Resolve -->
+    <div id="modal-davinci" class="modal" data-app="davinci">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('davinci')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/DcApoci.png" alt="Interface DaVinci Resolve">
+                    </div>
+                    <div class="description-area">
+                        <strong>DaVinci Resolve</strong> é o software padrão da indústria para correção de cor e edição de vídeo profissional. Reconhecido por suas ferramentas avançadas de color grading, edição não-linear e áudio de alta qualidade. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/hlia7Hj.jpeg" alt="DaVinci Resolve">
+                        </div>
+                        <h2>DaVinci Resolve</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">PREÇO ESPECIAL</span>
+                        <div class="modal-price" style="color: var(--davinci-color);">R$ 29,90</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.9</span>
+                        <div>
+                            <div class="rating-stars">★★★★★</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 203 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Colorista Léo</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Correção de cor imbatível, melhor do mercado."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Sophia Mendes</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Versão gratuita já é incrível, a paga então..."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Marcos Paulo</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Entrega rápida e produto original. Recomendo!"</p>
+                        </div>
+                    </div>
+                    <a href="https://pay.cakto.com.br/xm649yh_787547" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> COMPRAR AGORA
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filmora PC -->
+    <div id="modal-filmora" class="modal" data-app="filmora">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('filmora')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/umUQFG7.jpeg" alt="Interface Filmora">
+                    </div>
+                    <div class="description-area">
+                        <strong>Wondershare Filmora</strong> é um editor de vídeo intuitivo e poderoso, perfeito para iniciantes e criadores de conteúdo. Com centenas de efeitos, transições e templates, você cria vídeos incríveis para YouTube, redes sociais e muito mais. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/recYYQF.jpeg" alt="Filmora">
+                        </div>
+                        <h2>Filmora</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">PREÇO ESPECIAL</span>
+                        <div class="modal-price" style="color: var(--filmora-color);">R$ 20,00</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.7</span>
+                        <div>
+                            <div class="rating-stars">★★★★☆</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 134 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Juliana Oliveira</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Muito fácil de usar, efeitos lindos e entrega rápida."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Felipe Santos</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Ótimo para quem está começando, recomendo."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Camila Rocha</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Melhor custo-benefício, muito completo."</p>
+                        </div>
+                    </div>
+                    <a href="https://pay.cakto.com.br/wnj7ev7_787599" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> COMPRAR AGORA
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HitFilm Express -->
+    <div id="modal-hitfilm" class="modal" data-app="hitfilm">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('hitfilm')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/TSoO7Bj.png" alt="Interface HitFilm Express">
+                    </div>
+                    <div class="description-area">
+                        <strong>HitFilm Express</strong> é um software poderoso de edição de vídeo e VFX (efeitos visuais). Perfeito para criadores que buscam ferramentas profissionais, com suporte a composição, chroma key e centenas de efeitos. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/NgHB8H9.jpeg" alt="HitFilm Express">
+                        </div>
+                        <h2>HitFilm Express</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">PREÇO ESPECIAL</span>
+                        <div class="modal-price" style="color: var(--hitfilm-color);">R$ 15,00</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.6</span>
+                        <div>
+                            <div class="rating-stars">★★★★☆</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 89 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Thiago VFX</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Ótimo software para efeitos visuais, vale cada centavo!"</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Larissa Moura</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Muito bom para quem quer aprender VFX."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Gustavo Lima</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Entrega rápida e produto funcionando perfeitamente."</p>
+                        </div>
+                    </div>
+                    <a href="https://pay.cakto.com.br/pnoyfvj_787612" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> COMPRAR AGORA
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OBS Studio -->
+    <div id="modal-obs" class="modal" data-app="obs">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('obs')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/0MLdbfh.jpeg" alt="Interface OBS Studio">
+                    </div>
+                    <div class="description-area">
+                        <strong>OBS Studio</strong> é o software de gravação e transmissão ao vivo mais popular do mundo, totalmente gratuito e de código aberto. Perfeito para streamers, criadores de conteúdo e profissionais que precisam de alta qualidade e personalização. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/YXjr1lN.jpeg" alt="OBS Studio">
+                        </div>
+                        <h2>OBS Studio</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">GRATUITO</span>
+                        <div class="modal-price" style="color: var(--obs-color);">Grátis</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.9</span>
+                        <div>
+                            <div class="rating-stars">★★★★★</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 512 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Streamer João</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Indispensável para lives, melhor software gratuito!"</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Carla Lima</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Grátis e extremamente poderoso."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Marcos Teles</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Funciona perfeitamente, recomendo."</p>
+                        </div>
+                    </div>
+                    <a href="https://obsproject.com/" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> BAIXAR GRÁTIS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action! -->
+    <div id="modal-action" class="modal" data-app="action">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('action')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/6SHT3PG.jpeg" alt="Interface Action!">
+                    </div>
+                    <div class="description-area">
+                        <strong>Action!</strong> é um software de gravação de tela desenvolvido pela Mirillis, focado em captura de jogos e aplicações em tempo real. Oferece alta performance, suporte a DirectX, OpenGL e Vulkan, e recursos como gravação em 4K e streaming. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/K54kZ4N.jpeg" alt="Action!">
+                        </div>
+                        <h2>Action!</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">PREÇO ESPECIAL</span>
+                        <div class="modal-price" style="color: var(--action-color);">R$ 5,00</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.7</span>
+                        <div>
+                            <div class="rating-stars">★★★★☆</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 98 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">João Gamer</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Melhor gravador para jogos, muito fluido e sem lag."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Mariana Souza</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Ótima qualidade, entrega rápida."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Lucas Lima</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Recomendo, funciona perfeitamente."</p>
+                        </div>
+                    </div>
+                    <a href="https://pay.cakto.com.br/36x58r7_787641" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> COMPRAR AGORA
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- oCam -->
+    <div id="modal-ocam" class="modal" data-app="ocam">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('ocam')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/nzLI85Y.png" alt="Interface oCam">
+                    </div>
+                    <div class="description-area">
+                        <strong>oCam</strong> é um software de captura de tela simples, gratuito e eficiente, desenvolvido pela Ohsoft. Permite gravar a tela do computador, jogos, vídeos e áudio com facilidade, oferecendo opções de codec, seleção de área e captura de dispositivo. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/UAgH3ER.png" alt="oCam">
+                        </div>
+                        <h2>oCam</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">GRATUITO</span>
+                        <div class="modal-price" style="color: var(--ocam-color);">Grátis</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.6</span>
+                        <div>
+                            <div class="rating-stars">★★★★☆</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 112 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Carlos Eduardo</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Simples e funciona perfeitamente, recomendo!"</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Fernanda Lima</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Muito bom para gravações rápidas, sem complicação."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Ricardo Santos</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Leve e eficiente, melhor custo (zero)."</p>
+                        </div>
+                    </div>
+                    <a href="https://www.mediafire.com/file/q1k379g1hg8ltao/OhSoft_OCam_550.0_FELAS_EDITOR.zip/file" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> BAIXAR GRÁTIS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bandicam -->
+    <div id="modal-bandicam" class="modal" data-app="bandicam">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('bandicam')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/9uEp6lM.png" alt="Interface Bandicam">
+                    </div>
+                    <div class="description-area">
+                        <strong>Bandicam</strong> é um software de gravação de tela de alta performance, desenvolvido pela Bandisoft. É conhecido por sua capacidade de gravar jogos e aplicações em alta resolução com excelente compressão, oferecendo suporte a DirectX, OpenGL e Vulkan, além de recursos como webcam e sobreposição de áudio. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/JC6jRiw.jpeg" alt="Bandicam">
+                        </div>
+                        <h2>Bandicam</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">PREÇO ESPECIAL</span>
+                        <div class="modal-price" style="color: var(--bandicam-color);">R$ 5,00</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.8</span>
+                        <div>
+                            <div class="rating-stars">★★★★★</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 156 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">André Gamer</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Melhor gravador para jogos leves, muito otimizado."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Paula Cristina</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Qualidade incrível e arquivos pequenos."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Roberto Carlos</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Funciona perfeitamente, entrega rápida."</p>
+                        </div>
+                    </div>
+                    <a href="https://pay.cakto.com.br/6ts792q_787661" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> COMPRAR AGORA
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CapCut -->
+    <div id="modal-capcut" class="modal" data-app="capcut">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('capcut')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/vuBDYZz.jpeg" alt="Interface CapCut">
+                    </div>
+                    <div class="description-area">
+                        <div style="background: rgba(46, 204, 113, 0.1); color: var(--success-badge); padding: 0.5rem 1rem; border-radius: 30px; margin-bottom: 1rem; display: inline-block; border: 1px solid rgba(46, 204, 113, 0.3);">
+                            <i class="fas fa-info-circle"></i> Versão original antiga • Sem conteúdo pago
+                        </div>
+                        <strong>CapCut</strong> é um editor de vídeo completo para dispositivos móveis, desenvolvido pela Bytedance (mesma empresa do TikTok). Oferece ferramentas profissionais de edição, como cortes, transições, efeitos, chroma key, estabilização e uma vasta biblioteca de músicas e stickers. Perfeito para criar conteúdo viral para redes sociais. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/VgfWd40.jpeg" alt="CapCut">
+                        </div>
+                        <h2>CapCut</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">GRATUITO</span>
+                        <div class="modal-price" style="color: var(--capcut-color);">Grátis</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.8</span>
+                        <div>
+                            <div class="rating-stars">★★★★★</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 445 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">TikToker Raquel</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Melhor app para editar vídeos para o TikTok, muito completo!"</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Jonas Oliveira</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Muitos efeitos legais e fáceis de usar."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Mariana Lima</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Ótimo app, entrega rápida e funcionando perfeitamente."</p>
+                        </div>
+                    </div>
+                    <a href="https://play.google.com/store/apps/details?id=com.lemon.lvoverseas&pcampaignid=web_share" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> BAIXAR GRÁTIS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- InShot -->
+    <div id="modal-inshot" class="modal" data-app="inshot">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('inshot')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/jinaM13.png" alt="Interface InShot">
+                    </div>
+                    <div class="description-area">
+                        <strong>InShot</strong> é um dos aplicativos de edição de vídeo e foto mais populares para dispositivos móveis. Oferece ferramentas completas para cortar, aparar, adicionar música, efeitos, textos e stickers. Perfeito para criar conteúdo para TikTok, Instagram, YouTube e outras redes sociais. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/ff6Da7n.jpeg" alt="InShot">
+                        </div>
+                        <h2>InShot</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">GRATUITO</span>
+                        <div class="modal-price" style="color: var(--inshot-color);">Grátis</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.7</span>
+                        <div>
+                            <div class="rating-stars">★★★★☆</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 267 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Mirella Santos</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Perfeito para editar vídeos para o Instagram, muito fácil!"</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Felipe Oliveira</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Muito prático e completo, recomendo."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Camila Rocha</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Entrega rápida e app funcionando perfeitamente."</p>
+                        </div>
+                    </div>
+                    <a href="https://play.google.com/store/apps/details?id=com.camerasideas.instashot&pcampaignid=web_share" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> BAIXAR GRÁTIS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KineMaster -->
+    <div id="modal-kinemaster" class="modal" data-app="kinemaster">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('kinemaster')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/211cQ64.png" alt="Interface KineMaster">
+                    </div>
+                    <div class="description-area">
+                        <strong>KineMaster</strong> é um dos editores de vídeo mais poderosos para dispositivos móveis. Esta versão desbloqueada oferece todas as funcionalidades premium funcionando: exportação sem marca d'água, todos os efeitos premium, plugins funcionais, camadas ilimitadas, chroma key, controle de velocidade e muito mais. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/PKp0lJn.jpeg" alt="KineMaster">
+                        </div>
+                        <h2>KineMaster</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">PREÇO ESPECIAL</span>
+                        <div class="modal-price" style="color: var(--kinemaster-color);">R$ 19,90</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.8</span>
+                        <div>
+                            <div class="rating-stars">★★★★★</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 198 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Diego Oliveira</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Chroma key no celular funciona perfeitamente! Muito profissional."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Larissa Castro</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Todos os efeitos premium desbloqueados, vale muito a pena."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Marcelo Lima</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Entrega rápida e app funcionando perfeitamente."</p>
+                        </div>
+                    </div>
+                    <a href="https://pay.cakto.com.br/dqqqf6q_787666" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> COMPRAR AGORA
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filmora Mobile -->
+    <div id="modal-filmora-mobile" class="modal" data-app="filmora-mobile">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('filmora-mobile')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/Bfor5eu.jpeg" alt="Interface Filmora Mobile">
+                    </div>
+                    <div class="description-area">
+                        <strong>Filmora Mobile</strong> é a versão para dispositivos móveis do famoso editor Filmora. Esta versão desbloqueada oferece:
+                        <ul style="margin-top: 0.5rem; margin-left: 1.2rem; color: var(--text-secondary);">
+                            <li>✓ Efeitos premium desbloqueados</li>
+                            <li>✓ Exportação de vídeo sem marca d'água</li>
+                            <li>✓ Transições premium liberadas</li>
+                            <li>⚠️ Alguns efeitos de IA não funcionam</li>
+                            <li>💡 Para adicionar uma conta, use um gerador de e-mail temporário</li>
+                        </ul>
+                        Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/vMt9294.jpeg" alt="Filmora Mobile">
+                        </div>
+                        <h2>Filmora Mobile</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">PREÇO ESPECIAL</span>
+                        <div class="modal-price" style="color: var(--filmora-mobile-color);">R$ 7,00</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.6</span>
+                        <div>
+                            <div class="rating-stars">★★★★☆</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 87 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Camila Rocha</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Muito bom, todos os efeitos desbloqueados valem a pena!"</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Lucas Ferreira</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Funciona perfeitamente, entrega rápida."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Mariana Costa</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Melhor que a versão gratuita da Play Store!"</p>
+                        </div>
+                    </div>
+                    <a href="https://pay.cakto.com.br/ez9pkb3_787672" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> COMPRAR AGORA
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audition -->
+    <div id="modal-audition" class="modal" data-app="audition">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('audition')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/DRat4aL.png" alt="Interface Adobe Audition">
+                    </div>
+                    <div class="description-area">
+                        <strong>Adobe Audition</strong> é o software profissional para edição de áudio. Perfeito para podcasters, músicos e criadores de conteúdo que buscam qualidade de estúdio. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/FIOCWzU.jpeg" alt="Adobe Audition">
+                        </div>
+                        <h2>Adobe Audition</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">PREÇO ESPECIAL</span>
+                        <div class="modal-price" style="color: var(--audition-color);">R$ 28,00</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.8</span>
+                        <div>
+                            <div class="rating-stars">★★★★★</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 92 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Podcaster Marcos</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Áudio cristalino, melhor software para podcast."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Música Renata</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Ferramentas profissionais, entrega rápida."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">João Silva</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Recomendo, produto original e funcionando."</p>
+                        </div>
+                    </div>
+                    <a href="https://pay.cakto.com.br/38eu6yw_787712" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> COMPRAR AGORA
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VoiceMeeter Banana -->
+    <div id="modal-voicemeeter" class="modal" data-app="voicemeeter">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('voicemeeter')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/RsaOg9i.jpeg" alt="Interface VoiceMeeter Banana">
+                    </div>
+                    <div class="description-area">
+                        <strong>VoiceMeeter Banana</strong> é um poderoso mixer de áudio virtual que permite rotear e processar áudio entre diferentes dispositivos e aplicativos. Perfeito para streamers, podcasters e criadores que precisam de controle total sobre o áudio do microfone, jogos e comunicação. Pode ser usado em conjunto com o SteelSeries Sonar para um setup ainda mais completo . Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/QDYiSkX.png" alt="VoiceMeeter Banana">
+                        </div>
+                        <h2>VoiceMeeter Banana</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">GRATUITO</span>
+                        <div class="modal-price" style="color: var(--voicemeeter-color);">Grátis</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.7</span>
+                        <div>
+                            <div class="rating-stars">★★★★☆</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 156 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Streamer Marcos</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Indispensável para separar áudio do jogo e do Discord!"</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Podcaster Carla</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Meu microfone nunca soou tão profissional."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">João Teles</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Requer configuração, mas depois que aprende, é perfeito."</p>
+                        </div>
+                    </div>
+                    <a href="https://vb-audio.com/Voicemeeter/banana.htm" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> BAIXAR GRÁTIS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SteelSeries Sonar -->
+    <div id="modal-sonar" class="modal" data-app="sonar">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('sonar')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/nng1kaV.png" alt="Interface SteelSeries Sonar">
+                    </div>
+                    <div class="description-area">
+                        <strong>SteelSeries Sonar</strong> é um software inovador de processamento de áudio que faz parte do SteelSeries GG. Ele oferece controle avançado sobre canais de áudio (jogo, chat, mídia, microfone) com recursos de IA para eliminação de ruído e aprimoramento de voz. Pode ser usado em conjunto com o VoiceMeeter Banana para um controle ainda mais refinado sobre o áudio do microfone . Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/w1eixCE.png" alt="SteelSeries Sonar">
+                        </div>
+                        <h2>SteelSeries Sonar</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">GRATUITO</span>
+                        <div class="modal-price" style="color: var(--sonar-color);">Grátis</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.8</span>
+                        <div>
+                            <div class="rating-stars">★★★★★</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 98 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Gamer André</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Sonar + Voicemeeter = combinação imbatível para áudio!"</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Criadora Luísa</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Os filtros de IA melhoraram muito a qualidade do meu microfone."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Ricardo Lima</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Fácil de usar e muito eficiente."</p>
+                        </div>
+                    </div>
+                    <a href="https://steelseries.com/pt-br/gg/sonar?srsltid=AfmBOopHioi2tddG8RmtgyYSRM9fOCgFch3tM5WVGBIoibCCJO3peSWl" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> BAIXAR GRÁTIS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audacity -->
+    <div id="modal-audacity" class="modal" data-app="audacity">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('audacity')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/63eqgqZ.png" alt="Interface Audacity">
+                    </div>
+                    <div class="description-area">
+                        <strong>Audacity</strong> é um editor de áudio gratuito e de código aberto, poderoso e versátil. Perfeito para gravação, edição e mixagem de áudio. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/8Skb4HH.jpeg" alt="Audacity">
+                        </div>
+                        <h2>Audacity</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">GRATUITO</span>
+                        <div class="modal-price" style="color: var(--audacity-color);">Grátis</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.7</span>
+                        <div>
+                            <div class="rating-stars">★★★★☆</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 178 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">João Editor</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Grátis e muito bom, recomendo!"</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Ana Clara</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Ótimo para edições simples."</p>
+                        </div>
+                    </div>
+                    <a href="https://www.audacityteam.org/" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> BAIXAR GRÁTIS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AZ Screen Recorder -->
+    <div id="modal-az" class="modal" data-app="az">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('az')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/Lt1dCRD.png" alt="Interface AZ Screen Recorder">
+                    </div>
+                    <div class="description-area">
+                        <strong>AZ Screen Recorder</strong> é um dos gravadores de tela mais populares para Android. Oferece gravação em alta qualidade, sem limite de tempo, com opções de pausa, desenho na tela, e gravação de áudio interno e externo. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/uWWSOOL.jpeg" alt="AZ Screen Recorder">
+                        </div>
+                        <h2>AZ Screen Recorder</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">GRATUITO</span>
+                        <div class="modal-price" style="color: var(--az-color);">Grátis</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.7</span>
+                        <div>
+                            <div class="rating-stars">★★★★☆</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 187 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Carlos Silva</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Melhor gravador gratuito para Android!"</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Ana Beatriz</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Grava áudio interno perfeitamente."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">João Pedro</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Funciona muito bem, sem travamentos."</p>
+                        </div>
+                    </div>
+                    <a href="https://play.google.com/store/apps/details?id=com.hecorat.screenrecorder.free&pcampaignid=web_share" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> BAIXAR GRÁTIS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobizen -->
+    <div id="modal-mobizen" class="modal" data-app="mobizen">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('mobizen')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/MSKaiEf.png" alt="Interface Mobizen">
+                    </div>
+                    <div class="description-area">
+                        <strong>Mobizen</strong> é um gravador de tela para Android que se destaca pela facilidade de uso e recursos como captura de tela, edição rápida e gravação de áudio interno. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/GXUnScA.png" alt="Mobizen">
+                        </div>
+                        <h2>Mobizen</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">GRATUITO</span>
+                        <div class="modal-price" style="color: var(--mobizen-color);">Grátis</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.6</span>
+                        <div>
+                            <div class="rating-stars">★★★★☆</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 134 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Larissa Moura</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Muito fácil de usar, recomendo!"</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Felipe Santos</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Boa qualidade de gravação."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Camila Rocha</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Entrega rápida e app funcionando perfeitamente."</p>
+                        </div>
+                    </div>
+                    <a href="https://play.google.com/store/apps/details?id=com.rsupport.mvagent&pcampaignid=web_share" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> BAIXAR GRÁTIS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DU Recorder -->
+    <div id="modal-du" class="modal" data-app="du">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('du')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/6ZFUKpX.jpeg" alt="Interface DU Recorder">
+                    </div>
+                    <div class="description-area">
+                        <strong>DU Recorder</strong> é um dos gravadores de tela mais completos para Android. Além da gravação, oferece edição de vídeo, transmissão ao vivo, captura de tela e até um assistente de gravação em tela flutuante. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/5U3GKkq.png" alt="DU Recorder">
+                        </div>
+                        <h2>DU Recorder</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">GRATUITO</span>
+                        <div class="modal-price" style="color: var(--du-color);">Grátis</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.8</span>
+                        <div>
+                            <div class="rating-stars">★★★★★</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 212 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">André Gamer</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Muito completo, grava e já edita na hora!"</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Paula Cristina</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Adoro o assistente flutuante."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Roberto Carlos</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Funciona perfeitamente, entrega rápida."</p>
+                        </div>
+                    </div>
+                    <a href="https://play.google.com/store/apps/details?id=com.blogspot.byterevapps.lollipopscreenrecorder&pcampaignid=web_share" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> BAIXAR GRÁTIS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen Recorder -->
+    <div id="modal-screenrec" class="modal" data-app="screenrec">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal('screenrec')"><i class="fas fa-times"></i></div>
+            <div class="modal-layout">
+                <div class="modal-left">
+                    <div class="product-main-image">
+                        <img src="https://i.imgur.com/dPXSBCp.png" alt="Interface Screen Recorder">
+                    </div>
+                    <div class="description-area">
+                        <strong>Screen Recorder - No Ads</strong> é um gravador de tela simples, eficiente e sem anúncios. Oferece gravação em alta definição, opções de áudio interno e externo, e uma interface limpa e fácil de usar. Versão original, testada e livre de vírus.
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <img src="https://i.imgur.com/q55Ysak.png" alt="Screen Recorder">
+                        </div>
+                        <h2>Screen Recorder</h2>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i> Verificado • Testado • Livre de Vírus
+                    </div>
+                    <div class="price-tag">
+                        <span class="price-label">GRATUITO</span>
+                        <div class="modal-price" style="color: var(--screenrec-color);">Grátis</div>
+                    </div>
+                    <div class="rating-summary">
+                        <span class="rating-average">4.7</span>
+                        <div>
+                            <div class="rating-stars">★★★★☆</div>
+                            <span class="rating-count"><i class="fas fa-user"></i> 98 avaliações</span>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">João Gamer</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Sem anúncios e muito leve!"</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Mariana Souza</span>
+                                <span class="review-mini-stars">★★★★★</span>
+                            </div>
+                            <p class="review-mini-text">"Simples e funciona perfeitamente."</p>
+                        </div>
+                        <div class="review-mini">
+                            <div class="review-mini-header">
+                                <span class="review-mini-name">Lucas Lima</span>
+                                <span class="review-mini-stars">★★★★☆</span>
+                            </div>
+                            <p class="review-mini-text">"Recomendo, qualidade excelente."</p>
+                        </div>
+                    </div>
+                    <a href="https://play.google.com/store/apps/details?id=videoeditor.videorecorder.screenrecorder&pcampaignid=web_share" class="buy-btn" target="_blank">
+                        <i class="fas fa-bolt"></i> BAIXAR GRÁTIS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>© 2024 FELAS EDITOR - Studio</p>
+        <p style="margin-top: 0.3rem;">Todos os softwares e serviços são testados e aprovados • Pagamento via CAKTO</p>
+    </footer>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            if (body.getAttribute('data-theme') === 'light') {
+                body.removeAttribute('data-theme');
+            } else {
+                body.setAttribute('data-theme', 'light');
+            }
+        }
+
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+        }
+
+        function openModal(id) {
+            document.getElementById(`modal-${id}`).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(id) {
+            document.getElementById(`modal-${id}`).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal.active').forEach(m => {
+                    m.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                });
+            }
+        });
+
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+
+        function updateProfilePhoto(photoUrl) {
+            const avatar = document.getElementById('profileAvatar');
+            avatar.innerHTML = `<img src="${photoUrl}" alt="FELAS">`;
+        }
+        updateProfilePhoto('https://i.imgur.com/LytyEje.jpeg');
+    </script>
+</body>
+</html>
